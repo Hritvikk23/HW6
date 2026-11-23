@@ -12,12 +12,12 @@ make all
 
 | Item | Value |
 | --- | --- |
-| Source URL | |
-| Downloaded on | |
+| Source URL | https://jse.amstat.org/v19n3/decock/AmesHousing.txt|
+| Downloaded on | 2026-11-23|
 | Citation | De Cock, D. (2011). Ames, Iowa: Alternative to the Boston Housing Data as an End of Semester Regression Project. Journal of Statistics Education, 19(3). |
 | Data dictionary | https://jse.amstat.org/v19n3/decock/DataDocumentation.txt |
-| Terms of use | |
-| Rows, columns on arrival | |
+| Terms of use | JSE data sets may be used freely for teaching if cited (name, author, date accessed); publication requires the author's consent.|
+| Rows, columns on arrival |(2930, 82) |
 
 ## Features used in Part 7
 
