@@ -26,3 +26,15 @@ List the 8 to 15 numeric columns in `NUMERIC_FEATURES`, and why.
 ## AI assistance
 
 Tool, what it was used for, which files.
+Tool: Claude
+
+| What it was used for | Files |
+|---|---|
+
+| Help with the validation functions and rules | validate.py |
+| Help with the Part 2 fixes, missing-value decoding, key checks and neighborhood join | src/clean.py |
+| Help with the missingness comparison and imputation strategies | missingness.py, impute.py` |
+| Help with the Part 7 variants and the custom Pipeline transformer | evaluate.py|
+| Explaining outputs and turning my answers into Markdown | report.md |
+
+

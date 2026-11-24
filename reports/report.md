@@ -171,4 +171,29 @@ saved reports/figures/lot_frontage_neighborhood_median.png
 ```
 
 ## 7 Leakage-safe evaluation
+
+```
+Output
+A: SalePrice-quintile median, full table    0.15718
+B: neighborhood median, full table          0.15718
+C: neighborhood median, in Pipeline         0.15718
+
+B - C difference: 0.000003
+```
+
+- Variant C gives the correct values, the transformer learns the neighborhood median from "fit" which only sees the training fold and applies them in "transform". Variants A and B leak. Variant A leaks the target because it uses Saleprice, the very thing that the model is trying to predict, to create one of the model's input. Variant B leaks test fold informarion because the neigborhood medians were computed from all 2929 houses before cross validation split the data.
+- Variant A cannot be used to price a house that has not sold yet because it's fill needs the saleprice of the house and unsold house doesn't have that. 
+- The difference between B and C is 0.000003. The difference is because to compute the neighbourhood median, B uses all the houses but C uses 80%, taking out of 20% of the houses doesn't really change the median by so much.
+
 ## 8 What this data cannot tell you
+- This data cannot tell us why the values are missing. It rejects MCAR but can differentiate between MAR vs MNAR.
+- Teh data shows which features go with the higher price but doesn't which one causes them
+
+### what I changed
+| Change | Rows | Why |
+|---|---|---|
+| Garage Yr Blt 2207 → 2007 (Order 2261) | 1 | Typo: the house was built in 2006, remodeled in 2007 and sold in 2007. |
+| Year Remod/Add 2001 → 2002 (Order 851) | 1 | Remodel recorded before construction; the dictionary says the remodel date equals the construction date when there is no remodel. |
+| MS Zoning `C (all)`, `I (all)`, `A (agr)` → `C`, `I`, `A` | 29 | Codes differed from the dictionary; recoded explicitly and reported. |
+| Dropped Order 2181 | 1 | Pre-construction sale (sold 2007, built 2008); no year could be corrected without inventing a value. |
+| Garage Qual and Garage Cond "NA" → missing | 1 each | The house has a garage, so "NA" cannot mean "no garage"; the value is genuinely unknown. |
