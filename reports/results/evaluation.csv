@@ -1,0 +1,4 @@
+,RMSE (log SalePrice)
+"A: SalePrice-quintile median, full table",0.15717516118263383
+"B: neighborhood median, full table",0.1571830422858536
+"C: neighborhood median, in Pipeline",0.15717968501224913
