@@ -1,9 +1,20 @@
 """Parts 3 and 4: decode true missing values, keep structural "none", check keys."""
 import sys
 import pandas as pd
+import numpy as np
 
 # Columns where the dictionary defines "NA" as "none", not "unknown".
-NA_MEANS_NONE: list[str] = []
+NA_MEANS_NONE: list[str] = [
+    "Alley",                                     # NA = No alley access
+    "Bsmt Qual", "Bsmt Cond", "Bsmt Exposure",   # NA = No Basement
+    "BsmtFin Type 1", "BsmtFin Type 2",          # NA = No Basement
+    "Fireplace Qu",                              # NA = No Fireplace
+    "Garage Type", "Garage Finish",              # NA = No Garage
+    "Garage Qual", "Garage Cond",                # NA = No Garage
+    "Pool QC",                                   # NA = No Pool
+    "Fence",                                     # NA = No Fence
+    "Misc Feature",                              # NA = None
+]
 
 MS_ZONING_FIXES = {"C (all)": "C", "I (all)": "I", "A (agr)": "A"}
 
@@ -51,11 +62,71 @@ def fix_failures(df: pd.DataFrame) -> pd.DataFrame:
 
 def decode_missing(df: pd.DataFrame) -> pd.DataFrame:
     """Turn only true missing values into NaN. Return a new DataFrame."""
-    return df.copy() 
+    df = df.copy()
+    #"NA" is not a dictionary code, so it means unknown
+    for col in df.columns:
+        if col not in NA_MEANS_NONE and not pd.api.types.is_numeric_dtype(df[col]):
+            mask = df[col] == "NA"
+            if mask.any():
+                df.loc[mask, col] = np.nan
+                print(f"decode {col}: {mask.sum()} 'NA' -> missing")
+
+    # If another column shows the feature exists, the "NA" is genuinely unknown.
+    has_feature = {
+        "garage": (df["Garage Type"] != "NA") | (df["Garage Area"] > 0),
+        "basement": df["Total Bsmt SF"] > 0,
+        "fireplace": df["Fireplaces"] > 0,
+        "pool": df["Pool Area"] > 0,
+    }
+    columns = {
+        "garage": ["Garage Type", "Garage Finish", "Garage Qual", "Garage Cond"],
+        "basement": ["Bsmt Qual", "Bsmt Cond", "Bsmt Exposure", "BsmtFin Type 1", "BsmtFin Type 2"],
+        "fireplace": ["Fireplace Qu"],
+        "pool": ["Pool QC"],
+    }
+    for feature, cols in columns.items():
+        for col in cols:
+            mask = has_feature[feature] & (df[col] == "NA")
+            if mask.any():
+                df.loc[mask, col] = np.nan
+                print(f"decode {col}: {mask.sum()} 'NA' but a {feature} exists -> missing")
+    return df
+
 
 def check_keys(df: pd.DataFrame) -> None:
     """Assert key uniqueness; print exact and key duplicate counts; run the many_to_one join."""
-    pass
+    for key in ["Order", "PID"]:
+        dupes = df.duplicated(subset=key).sum()
+        print(f"key {key}: {df[key].nunique()} unique in {len(df)} rows, {dupes} duplicates")
+    print(f"exact duplicate rows: {df.duplicated().sum()}")
+    assert df["PID"].is_unique, "PID is not unique"
+
+    # Lookup table
+    lookup = pd.DataFrame({
+        "Neighborhood": [
+            "Blmngtn", "Blueste", "BrDale", "BrkSide", "ClearCr", "CollgCr", "Crawfor",
+            "Edwards", "Gilbert", "Greens", "GrnHill", "IDOTRR", "Landmrk", "MeadowV",
+            "Mitchel", "Names", "NoRidge", "NPkVill", "NridgHt", "NWAmes", "OldTown",
+            "SWISU", "Sawyer", "SawyerW", "Somerst", "StoneBr", "Timber", "Veenker",
+        ],
+        "Neighborhood Name": [
+            "Bloomington Heights", "Bluestem", "Briardale", "Brookside", "Clear Creek",
+            "College Creek", "Crawford", "Edwards", "Gilbert", "Greens", "Green Hills",
+            "Iowa DOT and Rail Road", "Landmark", "Meadow Village", "Mitchell",
+            "North Ames", "Northridge", "Northpark Villa", "Northridge Heights",
+            "Northwest Ames", "Old Town", "South & West of Iowa State University",
+            "Sawyer", "Sawyer West", "Somerset", "Stone Brook", "Timberland", "Veenker",
+        ],
+    })
+    before = len(df)
+    merged = df.merge(lookup, on="Neighborhood", how="left", validate="many_to_one")
+    print(f"neighborhood join: {before} rows before, {len(merged)} rows after")
+    assert len(merged) == before, "join changed the row count"
+
+    # This reports codes the dictionary doesn't have instead of silently mapping them.
+    unmatched = merged.loc[merged["Neighborhood Name"].isna(), "Neighborhood"].value_counts()
+    if len(unmatched):
+        print(f"codes not in the dictionary lookup: {unmatched.to_dict()}")
 
 
 if __name__ == "__main__":
