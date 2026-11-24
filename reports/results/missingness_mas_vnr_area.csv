@@ -1,0 +1,38 @@
+column,statistic,has value,missing
+Lot Area,median,9429.0,9965.0
+SalePrice,median,160000.0,207500.0
+Year Built,median,1973.0,2006.0
+Gr Liv Area,median,1440.0,1564.0
+Lot Config,share Corner,0.174,0.217
+Lot Config,share CulDSac,0.061,0.087
+Lot Config,share FR2,0.029,0.043
+Lot Config,share FR3,0.005,0.0
+Lot Config,share Inside,0.731,0.652
+Neighborhood,share Blmngtn,0.01,0.0
+Neighborhood,share Blueste,0.003,0.0
+Neighborhood,share BrDale,0.01,0.0
+Neighborhood,share BrkSide,0.037,0.0
+Neighborhood,share ClearCr,0.015,0.0
+Neighborhood,share CollgCr,0.091,0.087
+Neighborhood,share Crawfor,0.035,0.043
+Neighborhood,share Edwards,0.066,0.043
+Neighborhood,share Gilbert,0.055,0.217
+Neighborhood,share Greens,0.003,0.0
+Neighborhood,share GrnHill,0.001,0.0
+Neighborhood,share IDOTRR,0.032,0.0
+Neighborhood,share Landmrk,0.0,0.0
+Neighborhood,share MeadowV,0.013,0.0
+Neighborhood,share Mitchel,0.039,0.0
+Neighborhood,share NAmes,0.152,0.0
+Neighborhood,share NPkVill,0.008,0.0
+Neighborhood,share NWAmes,0.045,0.0
+Neighborhood,share NoRidge,0.024,0.0
+Neighborhood,share NridgHt,0.056,0.087
+Neighborhood,share OldTown,0.082,0.0
+Neighborhood,share SWISU,0.017,0.0
+Neighborhood,share Sawyer,0.052,0.0
+Neighborhood,share SawyerW,0.043,0.043
+Neighborhood,share Somerst,0.059,0.435
+Neighborhood,share StoneBr,0.018,0.0
+Neighborhood,share Timber,0.024,0.043
+Neighborhood,share Veenker,0.008,0.0
